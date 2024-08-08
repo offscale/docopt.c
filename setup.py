@@ -9,7 +9,7 @@ import sys
 from ast import Assign, Name, parse
 from functools import partial
 from operator import attrgetter
-
+from itertools import chain
 from os import listdir, path
 from os.path import extsep
 
@@ -33,7 +33,8 @@ else:
     Constant = type("Constant", (expr,), {})
 
 
-package_name = "docopt_c"
+package_name_verbatim = "docopt_c"
+package_name = package_name_verbatim.replace("-", "_")
 
 with open(
     path.join(path.dirname(__file__), "README{extsep}md".format(extsep=extsep)), "rt"
@@ -59,7 +60,8 @@ def main():
     with open(
         path.join(
             path.abspath(path.dirname(__file__)),
-            "{package_name}{extsep}py".format(package_name=package_name, extsep=extsep),
+            package_name,
+            "__init__{extsep}py".format(extsep=extsep),
         )
     ) as f:
         parsed_init = parse(f.read())
@@ -88,13 +90,10 @@ def main():
         ),
     )
 
-    _data_join = partial(path.join, package_name, "_data")
-    package_data = {
-        "": list(map(_data_join, listdir(_data_join())))
-    }
+    _data_join = gen_join_on_pkg_name("_data")
 
     setup(
-        name=package_name,
+        name=package_name_verbatim,
         author=__author__,
         author_email="807580+SamuelMarks@users.noreply.github.com",
         version=__version__,
@@ -128,10 +127,23 @@ def main():
         ],
         license="MIT",
         license_files=["LICENSE-MIT"],
-        py_modules=[package_name],
-        scripts=["docopt.py", "docopt_c.py"],
+        # test_suite="{}{}tests".format(package_name, path.extsep),
         packages=find_packages(),
-        package_data=package_data,
+        install_requires=["pyyaml"],
+        scripts=list(map(partial(path.join, package_name), ("docopt.py", "docopt_c.py"))),
+        package_data={
+            package_name: list(
+                chain.from_iterable(
+                    map(
+                        lambda folder_join: map(
+                            folder_join,
+                            listdir(folder_join()),
+                        ),
+                        (_data_join,),
+                    )
+                )
+            )
+        },
         include_package_data=True,
     )
 

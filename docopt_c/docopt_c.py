@@ -5,7 +5,7 @@
 # (see LICENSE-MIT file for copying)
 
 
-"""Usage: docopt_c.py [options] [<docopt>]
+"""Usage: docopt_c [options] [<docopt>]
 
 Processes a docopt formatted string, from either stdin or a file, and
 outputs the equivalent C code to parse a CLI, to either the stdout or a file.
@@ -37,7 +37,7 @@ from string import Template
 
 import sys
 
-import docopt
+from docopt_c import docopt
 
 template_h = """
 #ifndef DOCOPT_$header_no_ext_H
