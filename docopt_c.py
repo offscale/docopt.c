@@ -26,7 +26,7 @@ Arguments:
 """
 
 __author__ = "Vladimir Keleshev"
-__version__ = "2.0rc2"
+__version__ = "2.0rc3"
 __description__ = "C generator for language for description of command-line interfaces"
 
 import numbers

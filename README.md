@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 ### Step 4. Profit!
 
 ```bash
-$ c99 example.c -o example.out
+$ cc -ansi example.c -o example.out
 $ ./example.out mine --drifting --speed=20
 Commands
     mine == true
