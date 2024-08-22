@@ -253,11 +253,8 @@ int elems_to_args(struct Elements *elements, struct DocoptArgs *args,
  * Main docopt function
  */
 
-struct DocoptArgs docopt(int argc, char *argv[], const bool help, const char *version) {
-    struct DocoptArgs args = {$defaults
-            usage_pattern,
-            $help_message
-    };
+int docopt(struct DocoptArgs *args, int argc, char *argv[],
+           const bool help, const char *version) {
     struct Tokens ts;
     struct Command commands[] = {$elems_cmds
     };
@@ -267,6 +264,10 @@ struct DocoptArgs docopt(int argc, char *argv[], const bool help, const char *ve
     };
     struct Elements elements;
     int return_code = EXIT_SUCCESS;
+    *args = (struct DocoptArgs){$defaults
+            usage_pattern,
+            $help_message
+    };
 
     elements.n_commands = $t_elems_n_commands;
     elements.n_arguments = $t_elems_n_arguments;
@@ -283,8 +284,7 @@ struct DocoptArgs docopt(int argc, char *argv[], const bool help, const char *ve
 
     ts = tokens_new(argc, argv);
     if (parse_args(&ts, &elements))
-        exit(EXIT_FAILURE);
-    if (elems_to_args(&elements, &args, help, version))
-        exit(return_code);
-    return args;
+        return EXIT_FAILURE;
+    if (elems_to_args(&elements, &args, help, version)) {}
+    return EXIT_FAILURE;
 }

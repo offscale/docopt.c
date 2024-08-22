@@ -132,7 +132,7 @@ struct DocoptArgs {
     const char *help_message[$help_message_n];
 };
 
-struct DocoptArgs docopt(int, char *[], bool, const char *);
+int docopt(struct DocoptArgs*, int, char *[], bool, const char *);
 
 #endif
 """
@@ -394,10 +394,6 @@ int elems_to_args(struct Elements *elements, struct DocoptArgs *args,
  */
 
 struct DocoptArgs docopt(int argc, char *argv[], const bool help, const char *version) {
-    struct DocoptArgs args = {$defaults
-            usage_pattern,
-            $help_message
-    };
     struct Command commands[] = {$elems_cmds
     };
     struct Argument arguments[] = {$elems_args
@@ -406,6 +402,10 @@ struct DocoptArgs docopt(int argc, char *argv[], const bool help, const char *ve
     };
     struct Elements elements;
     int return_code = EXIT_SUCCESS;
+    *args = (struct DocoptArgs){$defaults
+            usage_pattern,
+            $help_message
+    };
 
     elements.n_commands = $t_elems_n_commands;
     elements.n_arguments = $t_elems_n_arguments;
@@ -423,11 +423,10 @@ struct DocoptArgs docopt(int argc, char *argv[], const bool help, const char *ve
     {
         struct Tokens ts = tokens_new(argc, argv);
         if (parse_args(&ts, &elements))
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
     }
-    if (elems_to_args(&elements, &args, help, version))
-        exit(return_code);
-    return args;
+    if (elems_to_args(&elements, &args, help, version)) {}
+    return return_code;
 }
 """
 

@@ -81,6 +81,6 @@ struct DocoptArgs {
     const char *help_message[$help_message_n];
 };
 
-struct DocoptArgs docopt(int, char *[], bool, const char *);
+int docopt(struct DocoptArgs*, int, char *[], bool, const char *);
 
 #endif
